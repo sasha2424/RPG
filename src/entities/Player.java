@@ -1,0 +1,46 @@
+package entities;
+
+import main.Game;
+import processing.core.PApplet;
+
+public class Player extends Entity {
+
+	float speed = 10;
+
+	public Player(float x, float y) {
+		super(x, y);
+	}
+
+	public void reactToHover(Game g) {
+
+	}
+
+	public void reactToClick(Game g) {
+
+	}
+
+	public void draw(PApplet p) {
+		p.ellipse(x, y, 100, 100);
+	}
+
+	public void tick(Game g) {
+
+	}
+
+	public void moveUp() {
+		this.y -= speed;
+	}
+
+	public void moveDown() {
+		this.y += speed;
+	}
+
+	public void moveRight() {
+		this.x += speed;
+	}
+
+	public void moveLeft() {
+		this.x -= speed;
+	}
+
+}
