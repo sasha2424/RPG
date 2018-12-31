@@ -34,7 +34,9 @@ public class Main extends PApplet {
 		g.draw(this);
 
 		doPlayerMove();
+		g.tick();
 	}
+	
 
 	private void doPlayerTracking() {
 		if (keys.getKey("trackPlayer")) {

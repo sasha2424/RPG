@@ -10,6 +10,13 @@ public class Tree extends Entity {
 		super(x, y);
 	}
 
+	public void setStats() {
+		movable = false;
+		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
+		collisionBox.add(new CollisionBorder(this, 100, 100, 50));
+		collisionBox.add(new CollisionBorder(this, 0, 200, 50));
+	}
+
 	public void reactToHover(Game g) {
 		System.out.println("HOVER");
 	}
@@ -20,10 +27,11 @@ public class Tree extends Entity {
 
 	public void draw(PApplet p) {
 		p.image(getTexture("Tree"), x, y);
+		drawCollisionBox(p);
 	}
 
 	public void tick(Game g) {
-		
+
 	}
 
 }

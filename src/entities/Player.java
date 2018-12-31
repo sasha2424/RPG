@@ -1,5 +1,6 @@
 package entities;
 
+import entities.Entity.CollisionBorder;
 import main.Game;
 import processing.core.PApplet;
 
@@ -11,6 +12,11 @@ public class Player extends Entity {
 		super(x, y);
 	}
 
+	public void setStats() {
+		movable = true;
+		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
+	}
+
 	public void reactToHover(Game g) {
 
 	}
@@ -20,7 +26,9 @@ public class Player extends Entity {
 	}
 
 	public void draw(PApplet p) {
-		p.ellipse(x, y, 100, 100);
+		p.fill(255, 0, 0);
+		drawCollisionBox(p);
+		p.noFill();
 	}
 
 	public void tick(Game g) {
