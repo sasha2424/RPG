@@ -9,15 +9,15 @@ import textures.TextureLoader;
 
 public abstract class Entity {
 
-	protected float x;
-	protected float y;
+	protected double x;
+	protected double y;
 
 	protected boolean movable;
 
 	protected ArrayList<CollisionBorder> collisionBox;
-	protected float collisionRange;
+	protected double collisionRange;
 
-	protected Entity(float x, float y) {
+	protected Entity(double x, double y) {
 		this.x = x;
 		this.y = y;
 		collisionBox = new ArrayList<CollisionBorder>();
@@ -46,7 +46,7 @@ public abstract class Entity {
 
 	protected void drawCollisionBox(PApplet p) {
 		for (CollisionBorder b : collisionBox) {
-			p.ellipse(x + b.getX(), y + b.getY(), b.r * 2, b.r * 2);
+			p.ellipse((float) (x + b.getX()), (float) (y + b.getY()), (float) (b.r * 2), (float) (b.r * 2));
 		}
 	}
 
@@ -57,13 +57,13 @@ public abstract class Entity {
 	 * @param my
 	 * @return
 	 */
-	public boolean mouseInBorder(float mx, float my) {
-		float dist = (float) Math.sqrt((x - mx) * (x - mx) + (y - my) * (y - my));
+	public boolean mouseInBorder(double mx, double my) {
+		double dist = (double) Math.sqrt((x - mx) * (x - mx) + (y - my) * (y - my));
 		if (dist > collisionRange) {
 			return false;
 		}
 		for (CollisionBorder b : collisionBox) {
-			dist = (float) Math.sqrt((b.x + x - mx) * (b.x + x - mx) + (b.y + y - my) * (b.y + y - my));
+			dist = (double) Math.sqrt((b.x + x - mx) * (b.x + x - mx) + (b.y + y - my) * (b.y + y - my));
 			if (dist < b.r) {
 				return true;
 			}
@@ -85,44 +85,56 @@ public abstract class Entity {
 		if (!this.movable && !e.movable) {
 			return;
 		}
+
+		double[] selfNew = new double[2];
+		double[] otherNew = new double[2];
+		double count = 0;
+
 		for (CollisionBorder self : collisionBox) {
 			for (CollisionBorder other : e.collisionBox) {
 				if (!self.collidesWith(other)) {
 					continue;
 				}
-				float[] vect = self.collideWith(other);
+				double[] vect = self.collideWith(other);
 
 				if (this.movable && !e.movable) {
-					this.shiftX(vect[0]);
-					this.shiftY(vect[1]);
+					selfNew[0] = (vect[0] + selfNew[0] * count) / (count + 1);
+					selfNew[1] = (vect[1] + selfNew[1] * count) / (count + 1);
+					count++;
 				}
 				if (!this.movable && e.movable) {
-					e.shiftX(-vect[0]);
-					e.shiftY(-vect[1]);
+					otherNew[0] = (-vect[0] + otherNew[0] * count) / (count + 1);
+					otherNew[1] = (-vect[1] + otherNew[1] * count) / (count + 1);
+					count++;
 				}
 				if (this.movable && e.movable) {
-					this.shiftX(vect[0] / 2f);
-					this.shiftY(vect[1] / 2f);
-					e.shiftX(-vect[0] / 2f);
-					e.shiftY(-vect[1] / 2f);
+					selfNew[0] = (vect[0] / 2d + selfNew[0] * count) / (count + 1);
+					selfNew[1] = (vect[1] / 2d + selfNew[1] * count) / (count + 1);
+					otherNew[0] = (-vect[0] / 2d + otherNew[0] * count) / (count + 1);
+					otherNew[1] = (-vect[1] / 2d + otherNew[1] * count) / (count + 1);
+					count++;
 				}
 			}
 		}
+		this.shiftX(selfNew[0]);
+		this.shiftY(selfNew[1]);
+		e.shiftX(otherNew[0]);
+		e.shiftY(otherNew[1]);
 	}
 
-	public float getX() {
-		return x;
+	public double getX() {
+		return (double) x;
 	}
 
-	public void setX(float x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public float getY() {
-		return y;
+	public double getY() {
+		return (double) y;
 	}
 
-	public void setY(float y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
@@ -130,26 +142,26 @@ public abstract class Entity {
 		return TextureLoader.getTexture(name);
 	}
 
-	public void shiftX(float dx) {
-		x += dx;
+	public void shiftX(double vect) {
+		x += vect;
 	}
 
-	public void shiftY(float dy) {
+	public void shiftY(double dy) {
 		y += dy;
 	}
 
-	private float dist(Entity e) {
-		return (float) Math.sqrt((x - e.getX()) * (x - e.getX()) + (y - e.getY()) * (y - e.getY()));
+	private double dist(Entity e) {
+		return (double) Math.sqrt((x - e.getX()) * (x - e.getX()) + (y - e.getY()) * (y - e.getY()));
 	}
 
 	protected class CollisionBorder {
-		protected float x, y; // relative to the x and y of the entity
+		protected double x, y; // relative to the x and y of the entity
 		// these are the top left corner
-		protected float r; // radius of ball
+		protected double r; // radius of ball
 
 		protected Entity e; // Entity that this CollisionBorder belongs to
 
-		public CollisionBorder(Entity e, float x, float y, float r) {
+		public CollisionBorder(Entity e, double x, double y, double r) {
 			super();
 			this.e = e;
 			this.x = x;
@@ -168,53 +180,53 @@ public abstract class Entity {
 		 * @param b CollisionBorder to collide with
 		 * @return
 		 */
-		public float[] collideWith(CollisionBorder b) {
-			float dist = dist(b);
+		public double[] collideWith(CollisionBorder b) {
+			double dist = dist(b);
 			if (dist == 0 || dist > b.getR() + r) {
-				return new float[] { 0f, 0f };
+				return new double[] { 0f, 0f };
 			}
-			float overlap = b.getR() + r - dist;
-			return new float[] { overlap * getDeltaX(b) / dist, overlap * getDeltaY(b) / dist };
+			double overlap = b.getR() + r - dist;
+			return new double[] { overlap * getDeltaX(b) / dist, overlap * getDeltaY(b) / dist };
 
 		}
 
-		public float getX() {
+		public double getX() {
 			return x;
 		}
 
-		public void setX(float x) {
+		public void setX(double x) {
 			this.x = x;
 		}
 
-		public float getY() {
+		public double getY() {
 			return y;
 		}
 
-		public void setY(float y) {
+		public void setY(double y) {
 			this.y = y;
 		}
 
-		public float getR() {
+		public double getR() {
 			return r;
 		}
 
-		public void setR(float r) {
+		public void setR(double r) {
 			this.r = r;
 		}
 
-		private float dist(CollisionBorder b) {
-			return (float) Math.sqrt(getDeltaX(b) * getDeltaX(b) + getDeltaY(b) * getDeltaY(b));
+		private double dist(CollisionBorder b) {
+			return (double) Math.sqrt(getDeltaX(b) * getDeltaX(b) + getDeltaY(b) * getDeltaY(b));
 		}
 
-		public float dist() {
-			return (float) Math.sqrt(x * x + y * y);
+		public double dist() {
+			return (double) Math.sqrt(x * x + y * y);
 		}
 
-		private float getDeltaX(CollisionBorder b) {
+		private double getDeltaX(CollisionBorder b) {
 			return (x + e.x - b.getX() - b.e.getX());
 		}
 
-		private float getDeltaY(CollisionBorder b) {
+		private double getDeltaY(CollisionBorder b) {
 			return (y + e.y - b.getY() - b.e.getY());
 		}
 

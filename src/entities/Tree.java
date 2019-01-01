@@ -11,7 +11,7 @@ public class Tree extends Entity {
 	}
 
 	public void setStats() {
-		movable = false;
+		movable = true;
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		collisionBox.add(new CollisionBorder(this, 100, 100, 50));
 		collisionBox.add(new CollisionBorder(this, 0, 200, 50));
@@ -26,7 +26,7 @@ public class Tree extends Entity {
 	}
 
 	public void draw(PApplet p) {
-		p.image(getTexture("Tree"), x, y);
+		p.image(getTexture("Tree"), (float) x, (float) y);
 		drawCollisionBox(p);
 	}
 

@@ -15,6 +15,7 @@ public class Building extends Entity {
 	}
 
 	public void setStats() {
+
 		float Size = 300;
 		boundry = new ArrayList<Segment>();
 		boundry.add(new Segment(this, 0, 0, 0, Size, Type.WALL));
@@ -27,7 +28,7 @@ public class Building extends Entity {
 			if (s.t == Type.WALL) {
 				float length = (float) Math.sqrt((s.x1 - s.x2) * (s.x1 - s.x2) + (s.y1 - s.y2) * (s.y1 - s.y2));
 				System.out.println(s.x1 + "   " + s.y1 + "      " + s.x2 + "   " + s.y2);
-				for (float i = 0; i < length; i += 10) {
+				for (float i = 0; i < length; i += 5) {
 					collisionBox.add(new CollisionBorder(this, s.x1 + i * (s.x2 - s.x1) / length,
 							s.y1 + i * (s.y2 - s.y1) / length, 1));
 				}
@@ -78,7 +79,7 @@ public class Building extends Entity {
 		}
 
 		public void draw(PApplet p) {
-			p.line(e.x + x1, e.y + y1, e.x + x2, e.y + y2);
+			p.line((float) (e.x + x1), (float) (e.y + y1), (float) (e.x + x2), (float) (e.y + y2));
 			// TODO draw as a set of repeating images for the wall/door
 		}
 

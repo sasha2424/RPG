@@ -15,7 +15,7 @@ public class Game {
 		entities = new ArrayList<Entity>();
 
 		entities.add(new Tree(500, 500f));
-		entities.add(new Building(0, 800));
+		entities.add(new Building(0, 500));
 		player = new Player(0, 0);
 		entities.add(player);
 

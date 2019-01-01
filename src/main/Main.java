@@ -36,12 +36,11 @@ public class Main extends PApplet {
 		doPlayerMove();
 		g.tick();
 	}
-	
 
 	private void doPlayerTracking() {
 		if (keys.getKey("trackPlayer")) {
-			centerX = g.player.getX();
-			centerY = g.player.getY();
+			centerX = (float) g.player.getX();
+			centerY = (float) g.player.getY();
 		}
 	}
 
