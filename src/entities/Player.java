@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.ArrayList;
+
 import entities.Entity.CollisionBorder;
 import main.Game;
 import processing.core.PApplet;

@@ -6,15 +6,13 @@ import textures.TextureLoader;
 
 public class Tree extends Entity {
 
-	public Tree(float x, float y) {
+	public Tree(double x, double y) {
 		super(x, y);
 	}
 
 	public void setStats() {
-		movable = true;
-		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
-		collisionBox.add(new CollisionBorder(this, 100, 100, 50));
-		collisionBox.add(new CollisionBorder(this, 0, 200, 50));
+		movable = false;
+		collisionBox.add(new CollisionBorder(this, 140, 420, 30));
 	}
 
 	public void reactToHover(Game g) {
@@ -27,7 +25,6 @@ public class Tree extends Entity {
 
 	public void draw(PApplet p) {
 		p.image(getTexture("Tree"), (float) x, (float) y);
-		drawCollisionBox(p);
 	}
 
 	public void tick(Game g) {

@@ -14,8 +14,17 @@ public class Game {
 	public Game() {
 		entities = new ArrayList<Entity>();
 
-		entities.add(new Tree(500, 500f));
-		entities.add(new Building(0, 500));
+		entities.add(new Building(0, 0));
+		for (int i = 0; i < 20; i++) {
+			double x = Math.random() * 5000 - 2500;
+			double y = Math.random() * 5000 - 2500;
+			if (Math.random() < .8) {
+				entities.add(new Tree(x, y));
+			} else {
+				entities.add(new Building(x, y));
+			}
+		}
+
 		player = new Player(0, 0);
 		entities.add(player);
 

@@ -10,7 +10,7 @@ public class Building extends Entity {
 
 	protected ArrayList<Segment> boundry;
 
-	public Building(float x, float y) {
+	public Building(double x, double y) {
 		super(x, y);
 	}
 
@@ -19,18 +19,19 @@ public class Building extends Entity {
 		float Size = 300;
 		boundry = new ArrayList<Segment>();
 		boundry.add(new Segment(this, 0, 0, 0, Size, Type.WALL));
-		boundry.add(new Segment(this, 0, 0, Size, 0, Type.WALL));
 		boundry.add(new Segment(this, 0, Size, Size, Size, Type.WALL));
-		boundry.add(new Segment(this, Size, 0, Size, Size, Type.DOOR));
+		boundry.add(new Segment(this, Size, Size, Size, 0, Type.DOOR));
+		boundry.add(new Segment(this, Size, 0, 0, 0, Type.WALL));
 
 		for (Segment s : boundry) {
-			collisionBox.add(new CollisionBorder(this, s.x1, s.y1, 5));
+			// collisionBox.add(new CollisionBorder(this, s.x1, s.y1, 5));
 			if (s.t == Type.WALL) {
 				float length = (float) Math.sqrt((s.x1 - s.x2) * (s.x1 - s.x2) + (s.y1 - s.y2) * (s.y1 - s.y2));
 				System.out.println(s.x1 + "   " + s.y1 + "      " + s.x2 + "   " + s.y2);
-				for (float i = 0; i < length; i += 5) {
+
+				for (double i = 0; i < length; i += 40) {
 					collisionBox.add(new CollisionBorder(this, s.x1 + i * (s.x2 - s.x1) / length,
-							s.y1 + i * (s.y2 - s.y1) / length, 1));
+							s.y1 + i * (s.y2 - s.y1) / length, 0));
 				}
 
 			}
@@ -50,7 +51,6 @@ public class Building extends Entity {
 		for (Segment s : boundry) {
 			s.draw(p);
 		}
-		drawCollisionBox(p);
 	}
 
 	public void tick(Game g) {

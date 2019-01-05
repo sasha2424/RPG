@@ -86,10 +86,6 @@ public abstract class Entity {
 			return;
 		}
 
-		double[] selfNew = new double[2];
-		double[] otherNew = new double[2];
-		double count = 0;
-
 		for (CollisionBorder self : collisionBox) {
 			for (CollisionBorder other : e.collisionBox) {
 				if (!self.collidesWith(other)) {
@@ -98,28 +94,21 @@ public abstract class Entity {
 				double[] vect = self.collideWith(other);
 
 				if (this.movable && !e.movable) {
-					selfNew[0] = (vect[0] + selfNew[0] * count) / (count + 1);
-					selfNew[1] = (vect[1] + selfNew[1] * count) / (count + 1);
-					count++;
+					this.shiftX(vect[0]);
+					this.shiftY(vect[1]);
 				}
 				if (!this.movable && e.movable) {
-					otherNew[0] = (-vect[0] + otherNew[0] * count) / (count + 1);
-					otherNew[1] = (-vect[1] + otherNew[1] * count) / (count + 1);
-					count++;
+					e.shiftX(-vect[0]);
+					e.shiftY(-vect[1]);
 				}
 				if (this.movable && e.movable) {
-					selfNew[0] = (vect[0] / 2d + selfNew[0] * count) / (count + 1);
-					selfNew[1] = (vect[1] / 2d + selfNew[1] * count) / (count + 1);
-					otherNew[0] = (-vect[0] / 2d + otherNew[0] * count) / (count + 1);
-					otherNew[1] = (-vect[1] / 2d + otherNew[1] * count) / (count + 1);
-					count++;
+					this.shiftX(vect[0] / 2d);
+					this.shiftY(vect[1] / 2d);
+					e.shiftX(-vect[0] / 2d);
+					e.shiftY(-vect[1] / 2d);
 				}
 			}
 		}
-		this.shiftX(selfNew[0]);
-		this.shiftY(selfNew[1]);
-		e.shiftX(otherNew[0]);
-		e.shiftY(otherNew[1]);
 	}
 
 	public double getX() {
@@ -185,8 +174,8 @@ public abstract class Entity {
 			if (dist == 0 || dist > b.getR() + r) {
 				return new double[] { 0f, 0f };
 			}
-			double overlap = b.getR() + r - dist;
-			return new double[] { overlap * getDeltaX(b) / dist, overlap * getDeltaY(b) / dist };
+			double overlap = (b.getR() + r - dist) / dist;
+			return new double[] { overlap * getDeltaX(b), overlap * getDeltaY(b) };
 
 		}
 
