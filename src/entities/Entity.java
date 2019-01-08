@@ -12,10 +12,18 @@ public abstract class Entity {
 	protected double x;
 	protected double y;
 
-	protected boolean movable;
+	protected boolean movable = true;
+	protected boolean visible = true;
+	protected boolean alive = true;
 
 	protected ArrayList<CollisionBorder> collisionBox;
 	protected double collisionRange;
+
+	protected String textureName;
+	protected String description;
+	protected Particle descriptionTracker;
+
+	protected int renderPriority = 0;
 
 	protected Entity(double x, double y) {
 		this.x = x;
@@ -36,13 +44,32 @@ public abstract class Entity {
 
 	public abstract void setStats();
 
-	public abstract void reactToHover(Game g);
+	public void reactToHover(Game g) {
+		if (!descriptionTracker.alive) {
+			descriptionTracker = Particle.getDescription(description, x, y);
+			g.add(descriptionTracker);
+		}
+	}
 
 	public abstract void reactToClick(Game g);
 
-	public abstract void draw(PApplet p);
+	public void draw(PApplet p) {
+		if (visible) {
+			p.image(getTexture("Tree"), (float) x, (float) y);
+		}
+	}
 
 	public abstract void tick(Game g);
+
+	public boolean touchesMouse(double mouseX, double mouseY) {
+		for (CollisionBorder b : collisionBox) {
+			if (b.inBorder(mouseX, mouseY)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	protected void drawCollisionBox(PApplet p) {
 		for (CollisionBorder b : collisionBox) {
@@ -156,6 +183,19 @@ public abstract class Entity {
 			this.x = x;
 			this.y = y;
 			this.r = r;
+		}
+
+		/**
+		 * Returns if the given world coordinate is in the border
+		 * 
+		 * @param mouseX
+		 * @param mouseY
+		 * @return
+		 */
+		public boolean inBorder(double mouseX, double mouseY) {
+			double dist = Math.sqrt((e.x + this.x - mouseX) * (e.x + this.x - mouseX)
+					+ (e.y + this.y - mouseY) * (e.y + this.y - mouseY));
+			return dist < this.r;
 		}
 
 		public boolean collidesWith(CollisionBorder b) {

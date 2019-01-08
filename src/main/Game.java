@@ -30,6 +30,18 @@ public class Game {
 
 	}
 
+	public void mouseAct(boolean pressed, double mouseX, double mouseY) {
+		if (pressed) {
+			for (Entity e : entities) {
+				e.tick(this);
+			}
+		} else {
+			for (Entity e : entities) {
+				e.tick(this);
+			}
+		}
+	}
+
 	public void tick() {
 		for (Entity e : entities) {
 			e.tick(this);
@@ -49,6 +61,10 @@ public class Game {
 		for (Entity e : entities) {
 			e.draw(p);
 		}
+	}
+
+	public void add(Entity e) {
+		entities.add(e);
 	}
 
 	public void ReactEntityToMouse() {
