@@ -35,13 +35,25 @@ public class Keys {
 		case 37:
 			left = state;
 			break;
+		case 65:
+			left = state;
+			break;
 		case 38:
+			up = state;
+			break;
+		case 87:
 			up = state;
 			break;
 		case 39:
 			right = state;
 			break;
+		case 68:
+			right = state;
+			break;
 		case 40:
+			down = state;
+			break;
+		case 83:
 			down = state;
 			break;
 		case 89: // this is how a toggle key is setup

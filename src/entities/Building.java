@@ -16,6 +16,8 @@ public class Building extends Entity {
 
 	public void setStats() {
 
+		movable = false;
+
 		float Size = 300;
 		boundry = new ArrayList<Segment>();
 		boundry.add(new Segment(this, 0, 0, 0, Size, Type.WALL));

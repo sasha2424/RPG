@@ -11,6 +11,8 @@ public class Tree extends Entity {
 	}
 
 	public void setStats() {
+		
+		renderYShift = 420;
 		movable = false;
 		collisionBox.add(new CollisionBorder(this, 140, 420, 30));
 		description = "This is a tree";

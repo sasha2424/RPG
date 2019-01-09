@@ -15,6 +15,7 @@ public class Player extends Entity {
 	}
 
 	public void setStats() {
+		renderPriority = 0;
 		movable = true;
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 	}
@@ -28,7 +29,6 @@ public class Player extends Entity {
 	}
 
 	public void draw(PApplet p) {
-		p.fill(255, 0, 0);
 		drawCollisionBox(p);
 		p.noFill();
 	}

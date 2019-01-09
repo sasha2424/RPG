@@ -7,7 +7,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import textures.TextureLoader;
 
-public abstract class Entity {
+public abstract class Entity implements Comparable<Entity> {
 
 	protected double x;
 	protected double y;
@@ -23,6 +23,7 @@ public abstract class Entity {
 	protected String description = "this is a thing";
 
 	protected int renderPriority = 0;
+	protected double renderYShift = 0;
 
 	protected Entity(double x, double y) {
 		this.x = x;
@@ -73,6 +74,7 @@ public abstract class Entity {
 	}
 
 	protected void drawCollisionBox(PApplet p) {
+		p.noFill();
 		for (CollisionBorder b : collisionBox) {
 			p.ellipse((float) (x + b.getX()), (float) (y + b.getY()), (float) (b.r * 2), (float) (b.r * 2));
 		}
@@ -260,6 +262,13 @@ public abstract class Entity {
 			return (y + e.y - b.getY() - b.e.getY());
 		}
 
+	}
+
+	public int compareTo(Entity e) {
+		if (e.renderPriority != renderPriority) {
+			return renderPriority - e.renderPriority;
+		}
+		return (int) (y + renderYShift - e.y - e.renderYShift);
 	}
 
 }

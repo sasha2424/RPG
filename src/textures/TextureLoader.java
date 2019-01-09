@@ -21,6 +21,9 @@ public class TextureLoader {
 
 		File[] files = path.listFiles();
 		for (File f : files) {
+			if (!f.getName().substring(f.getName().indexOf('.')).equals(".png")) {
+				continue;
+			}
 			try {
 				BufferedImage image = ImageIO.read(f);
 				String name = f.getName().substring(0, f.getName().indexOf('.'));

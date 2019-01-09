@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import entities.*;
 import processing.core.PApplet;
@@ -15,7 +16,7 @@ public class Game {
 		entities = new ArrayList<Entity>();
 
 		entities.add(new Building(0, 0));
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 50; i++) {
 			double x = Math.random() * 5000 - 2500;
 			double y = Math.random() * 5000 - 2500;
 			if (Math.random() < .8) {
@@ -65,10 +66,14 @@ public class Game {
 	 * @param mouseY
 	 */
 	public void draw(PApplet p, double mouseX, double mouseY) {
+		Collections.sort(entities);
 		for (Entity e : entities) {
 			e.draw(p);
 		}
 		for (Entity e : entities) {
+			if (e == player) {
+				continue;
+			}
 			if (e.mouseInBorder(mouseX, mouseY)) {
 				renderDescription(p, e.getDescription(), mouseX, mouseY);
 				if (p.mousePressed) {
@@ -76,13 +81,12 @@ public class Game {
 				} else {
 					e.reactToHover(this);
 				}
-				continue;
+				break;
 			}
 		}
 	}
 
 	private void renderDescription(PApplet p, String s, double x, double y) {
-
 		float hSpace = 4;
 		float vSpace = 6;
 		float tSize = 18;
