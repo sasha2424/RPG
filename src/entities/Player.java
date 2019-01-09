@@ -8,7 +8,7 @@ import processing.core.PApplet;
 
 public class Player extends Entity {
 
-	float speed = 10;
+	protected double renderDistance = 2000;
 
 	public Player(float x, float y) {
 		super(x, y);
@@ -18,6 +18,7 @@ public class Player extends Entity {
 		renderPriority = 0;
 		movable = true;
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
+		speed = 10;
 	}
 
 	public void reactToHover(Game g) {
@@ -51,6 +52,10 @@ public class Player extends Entity {
 
 	public void moveLeft() {
 		this.x -= speed;
+	}
+
+	public double getRenderDistance() {
+		return renderDistance;
 	}
 
 }

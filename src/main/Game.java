@@ -16,10 +16,12 @@ public class Game {
 		entities = new ArrayList<Entity>();
 
 		entities.add(new Building(0, 0));
-		for (int i = 0; i < 50; i++) {
-			double x = Math.random() * 5000 - 2500;
-			double y = Math.random() * 5000 - 2500;
-			if (Math.random() < .8) {
+
+		double size = 20000;
+		for (int i = 0; i < 300; i++) {
+			double x = Math.random() * size - size / 2;
+			double y = Math.random() * size - size / 2;
+			if (Math.random() < 1) {
 				entities.add(new Tree(x, y));
 			} else {
 				entities.add(new Building(x, y));
@@ -65,9 +67,18 @@ public class Game {
 	 * @param mouseX
 	 * @param mouseY
 	 */
-	public void draw(PApplet p, double mouseX, double mouseY) {
+	public void draw(PApplet p, double mouseX, double mouseY, double scale, double centerX, double centerY) {
 		Collections.sort(entities);
 		for (Entity e : entities) {
+			if (Math.abs((e.getX() - player.getX())) > player.getRenderDistance()) {
+				continue;
+			}
+			if (Math.abs((e.getY() - player.getY())) > player.getRenderDistance()) {
+				continue;
+			}
+			if (e.dist(player) > player.getRenderDistance()) {
+				continue;
+			}
 			e.draw(p);
 		}
 		for (Entity e : entities) {
@@ -84,6 +95,21 @@ public class Game {
 				break;
 			}
 		}
+		drawVisionRangeBorder(p, scale, centerX, centerY);
+	}
+
+	private void drawVisionRangeBorder(PApplet p, double scale, double centerX, double centerY) {
+		p.loadPixels();
+		for (int i = 0; i < p.pixels.length; i++) {
+			double x = (int) i % (p.width);
+			double y = (int) (i / p.width);
+			x = ((x - (double) p.width / 2) / scale + centerX);
+			y = ((y - (double) p.height / 2) / scale + centerY);
+			if (dist(x, y, player.getX(), player.getY()) > player.getRenderDistance()) {
+				p.pixels[i] = p.color(0);
+			}
+		}
+		p.updatePixels();
 	}
 
 	private void renderDescription(PApplet p, String s, double x, double y) {
@@ -121,6 +147,10 @@ public class Game {
 
 	public void movePlayerRight() {
 		player.moveRight();
+	}
+
+	private double dist(double x1, double y1, double x2, double y2) {
+		return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 	}
 
 }

@@ -26,22 +26,30 @@ public class Main extends PApplet {
 
 	public void draw() {
 		background(255);
+
 		doPlayerTracking();
 
 		translate(width / 2, height / 2);
 		scale(scale);
 		translate(-centerX, -centerY);
-		g.draw(this, getTranslatedX(), getTranslatedY());
+		g.draw(this, getTranslatedMouseX(), getTranslatedMouseY(), scale, centerX, centerY);
 
 		doPlayerMove();
 		g.tick();
+
+		translate(centerX, centerY);
+		scale(1 / scale);
+		translate(-width / 2, -height / 2);
+
+		fill(255, 0, 0);
+		text((int) this.frameRate, 50, 50);
 	}
 
-	private double getTranslatedX() {
+	private double getTranslatedMouseX() {
 		return (double) ((mouseX - width / 2) / scale + centerX);
 	}
 
-	private double getTranslatedY() {
+	private double getTranslatedMouseY() {
 		return (double) ((mouseY - height / 2) / scale + centerY);
 	}
 
@@ -92,7 +100,7 @@ public class Main extends PApplet {
 	}
 
 	public void keyPressed() {
-		System.out.println(keyCode);
+		// System.out.println(keyCode);
 		keys.setKey(keyCode, true);
 	}
 

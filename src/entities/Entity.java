@@ -12,6 +12,8 @@ public abstract class Entity implements Comparable<Entity> {
 	protected double x;
 	protected double y;
 
+	protected double speed;
+
 	protected boolean movable = true;
 	protected boolean visible = true;
 	protected boolean alive = true;
@@ -169,7 +171,7 @@ public abstract class Entity implements Comparable<Entity> {
 		y += dy;
 	}
 
-	private double dist(Entity e) {
+	public double dist(Entity e) {
 		return (double) Math.sqrt((x - e.getX()) * (x - e.getX()) + (y - e.getY()) * (y - e.getY()));
 	}
 
