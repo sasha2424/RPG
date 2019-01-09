@@ -27,7 +27,6 @@ public class Building extends Entity {
 			// collisionBox.add(new CollisionBorder(this, s.x1, s.y1, 5));
 			if (s.t == Type.WALL) {
 				float length = (float) Math.sqrt((s.x1 - s.x2) * (s.x1 - s.x2) + (s.y1 - s.y2) * (s.y1 - s.y2));
-				System.out.println(s.x1 + "   " + s.y1 + "      " + s.x2 + "   " + s.y2);
 
 				for (double i = 0; i < length; i += 40) {
 					collisionBox.add(new CollisionBorder(this, s.x1 + i * (s.x2 - s.x1) / length,

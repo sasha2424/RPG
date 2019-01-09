@@ -20,8 +20,7 @@ public abstract class Entity {
 	protected double collisionRange;
 
 	protected String textureName;
-	protected String description;
-	protected Particle descriptionTracker;
+	protected String description = "this is a thing";
 
 	protected int renderPriority = 0;
 
@@ -45,10 +44,7 @@ public abstract class Entity {
 	public abstract void setStats();
 
 	public void reactToHover(Game g) {
-		if (!descriptionTracker.alive) {
-			descriptionTracker = Particle.getDescription(description, x, y);
-			g.add(descriptionTracker);
-		}
+
 	}
 
 	public abstract void reactToClick(Game g);
@@ -56,10 +52,15 @@ public abstract class Entity {
 	public void draw(PApplet p) {
 		if (visible) {
 			p.image(getTexture("Tree"), (float) x, (float) y);
+			this.drawCollisionBox(p);
 		}
 	}
 
 	public abstract void tick(Game g);
+
+	public String getDescription() {
+		return description;
+	}
 
 	public boolean touchesMouse(double mouseX, double mouseY) {
 		for (CollisionBorder b : collisionBox) {

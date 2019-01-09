@@ -31,10 +31,18 @@ public class Main extends PApplet {
 		translate(width / 2, height / 2);
 		scale(scale);
 		translate(-centerX, -centerY);
-		g.draw(this);
+		g.draw(this, getTranslatedX(), getTranslatedY());
 
 		doPlayerMove();
 		g.tick();
+	}
+
+	private double getTranslatedX() {
+		return (double) ((mouseX - width / 2) / scale + centerX);
+	}
+
+	private double getTranslatedY() {
+		return (double) ((mouseY - height / 2) / scale + centerY);
 	}
 
 	private void doPlayerTracking() {

@@ -57,10 +57,42 @@ public class Game {
 		}
 	}
 
-	public void draw(PApplet p) {
+	/**
+	 * Draws world. mouseX and mouseY are given in world coordinates.
+	 * 
+	 * @param p
+	 * @param mouseX
+	 * @param mouseY
+	 */
+	public void draw(PApplet p, double mouseX, double mouseY) {
 		for (Entity e : entities) {
 			e.draw(p);
 		}
+		for (Entity e : entities) {
+			if (e.mouseInBorder(mouseX, mouseY)) {
+				renderDescription(p, e.getDescription(), mouseX, mouseY);
+				if (p.mousePressed) {
+					e.reactToClick(this);
+				} else {
+					e.reactToHover(this);
+				}
+				continue;
+			}
+		}
+	}
+
+	private void renderDescription(PApplet p, String s, double x, double y) {
+
+		float hSpace = 4;
+		float vSpace = 6;
+		float tSize = 18;
+		p.fill(255);
+		p.stroke(0);
+		p.strokeWeight(1);
+		p.textSize(tSize);
+		p.rect((float) x - hSpace, (float) y + vSpace, p.textWidth(s) + hSpace * 2, -tSize - vSpace);
+		p.fill(0);
+		p.text(s, (float) x, (float) y);
 	}
 
 	public void add(Entity e) {
