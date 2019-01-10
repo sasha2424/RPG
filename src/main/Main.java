@@ -8,8 +8,10 @@ import processing.event.MouseEvent;
 public class Main extends PApplet {
 
 	float scale = 1;
-	Game g = new Game();
-	Keys keys = new Keys();
+	float MIN_SCALE = 0.28242952f;
+	float MAX_SCALE = 2.9691548f;
+	Game g;
+	Keys keys;
 
 	float centerX = 0;
 	float centerY = 0;
@@ -21,28 +23,35 @@ public class Main extends PApplet {
 	}
 
 	public void setup() {
-
+		g = new Game();
+		keys = new Keys();
 	}
 
 	public void draw() {
 		background(255);
 
 		doPlayerTracking();
+		doPlayerMove();
+		g.tick();
 
 		translate(width / 2, height / 2);
 		scale(scale);
 		translate(-centerX, -centerY);
-		g.draw(this, getTranslatedMouseX(), getTranslatedMouseY(), scale, centerX, centerY);
 
-		doPlayerMove();
-		g.tick();
+		g.draw(this, getTranslatedMouseX(), getTranslatedMouseY(), scale, centerX, centerY);
 
 		translate(centerX, centerY);
 		scale(1 / scale);
 		translate(-width / 2, -height / 2);
 
-		fill(255, 0, 0);
-		text((int) this.frameRate, 50, 50);
+		System.out.println(scale);
+
+		if (frameRate >= 60) {
+			fill(0, 255, 0);
+		} else {
+			fill(255, 0, 0);
+		}
+		text((int) frameRate, 50, 50);
 	}
 
 	private double getTranslatedMouseX() {
@@ -77,9 +86,11 @@ public class Main extends PApplet {
 
 	public void mouseWheel(MouseEvent event) {
 		if (event.getCount() > 0) {
-			scale *= .9;
+			if (scale * .9 >= MIN_SCALE)
+				scale *= .9;
 		} else {
-			scale *= 1.1;
+			if (scale * 1.1 <= MAX_SCALE)
+				scale *= 1.1;
 		}
 	}
 

@@ -1,7 +1,9 @@
 package main;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import entities.*;
 import processing.core.PApplet;
@@ -17,8 +19,8 @@ public class Game {
 
 		entities.add(new Building(0, 0));
 
-		double size = 20000;
-		for (int i = 0; i < 300; i++) {
+		double size = 50000;
+		for (int i = 0; i < 5000; i++) {
 			double x = Math.random() * size - size / 2;
 			double y = Math.random() * size - size / 2;
 			if (Math.random() < 1) {
@@ -46,15 +48,30 @@ public class Game {
 	}
 
 	public void tick() {
+		ArrayList<Entity> toUpdate = new ArrayList<Entity>();
+
 		for (Entity e : entities) {
+			if (Math.abs((e.getX() - player.getX())) > player.getRenderDistance()) {
+				continue;
+			}
+			if (Math.abs((e.getY() - player.getY())) > player.getRenderDistance()) {
+				continue;
+			}
+			if (e.dist(player) > player.getRenderDistance() * 2) {
+				continue;
+			}
+			toUpdate.add(e);
+		}
+
+		for (Entity e : toUpdate) {
 			e.tick(this);
 		}
 
 		// perform each entity collision pair only once
-		for (int i = 0; i < entities.size() - 1; i++) {
-			for (int j = i + 1; j < entities.size(); j++) {
-				if (entities.get(i).nearEntity(entities.get(j))) {
-					entities.get(i).collide(entities.get(j));
+		for (int i = 0; i < toUpdate.size() - 1; i++) {
+			for (int j = i + 1; j < toUpdate.size(); j++) {
+				if (toUpdate.get(i).nearEntity(toUpdate.get(j))) {
+					toUpdate.get(i).collide(toUpdate.get(j));
 				}
 			}
 		}
@@ -68,7 +85,8 @@ public class Game {
 	 * @param mouseY
 	 */
 	public void draw(PApplet p, double mouseX, double mouseY, double scale, double centerX, double centerY) {
-		Collections.sort(entities);
+		ArrayList<Entity> toRender = new ArrayList<Entity>();
+
 		for (Entity e : entities) {
 			if (Math.abs((e.getX() - player.getX())) > player.getRenderDistance()) {
 				continue;
@@ -79,8 +97,14 @@ public class Game {
 			if (e.dist(player) > player.getRenderDistance()) {
 				continue;
 			}
+			toRender.add(e);
+		}
+
+		Collections.sort(toRender);
+		for (Entity e : toRender) {
 			e.draw(p);
 		}
+
 		for (Entity e : entities) {
 			if (e == player) {
 				continue;
@@ -99,14 +123,28 @@ public class Game {
 	}
 
 	private void drawVisionRangeBorder(PApplet p, double scale, double centerX, double centerY) {
+		Color fogColor = new Color(0, 0, 0);
+		double gradientSize = 500;
+
 		p.loadPixels();
 		for (int i = 0; i < p.pixels.length; i++) {
 			double x = (int) i % (p.width);
 			double y = (int) (i / p.width);
 			x = ((x - (double) p.width / 2) / scale + centerX);
 			y = ((y - (double) p.height / 2) / scale + centerY);
-			if (dist(x, y, player.getX(), player.getY()) > player.getRenderDistance()) {
-				p.pixels[i] = p.color(0);
+
+			double diff = player.getRenderDistance() - dist(x, y, player.getX(), player.getY());
+			if (diff < 0) {
+				p.pixels[i] = p.color(fogColor.getRGB());
+				continue;
+			}
+			if (diff < gradientSize) {
+				double ratio = (diff / gradientSize);
+				Color pixel = new Color(p.pixels[i]);
+				int R = (int) (fogColor.getRed() + (pixel.getRed() - fogColor.getRed()) * ratio);
+				int G = (int) (fogColor.getGreen() + (pixel.getGreen() - fogColor.getGreen()) * ratio);
+				int B = (int) (fogColor.getBlue() + (pixel.getBlue() - fogColor.getBlue()) * ratio);
+				p.pixels[i] = (new Color(R, G, B)).getRGB();
 			}
 		}
 		p.updatePixels();

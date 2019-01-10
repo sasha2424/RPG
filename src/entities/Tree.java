@@ -14,7 +14,7 @@ public class Tree extends Entity {
 		
 		renderYShift = 420;
 		movable = false;
-		collisionBox.add(new CollisionBorder(this, 140, 420, 30));
+		collisionBox.add(new CollisionBorder(this, 135, 420, 25));
 		description = "This is a tree";
 		textureName = "Tree";
 	}
