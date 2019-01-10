@@ -1,8 +1,5 @@
 package entities;
 
-import java.util.ArrayList;
-
-import entities.Entity.CollisionBorder;
 import main.Game;
 import processing.core.PApplet;
 
@@ -12,13 +9,11 @@ public class Player extends Entity {
 
 	public Player(float x, float y) {
 		super(x, y);
-	}
-
-	public void setStats() {
 		renderPriority = 0;
 		movable = true;
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		speed = 10;
+		recalculateCollisionRange();
 	}
 
 	public void reactToHover(Game g) {
@@ -30,8 +25,9 @@ public class Player extends Entity {
 	}
 
 	public void draw(PApplet p) {
-		drawCollisionBox(p);
-		p.noFill();
+		// drawCollisionBox(p);
+		p.fill(255, 0, 0);
+		p.ellipse((float) x, (float) y, 100, 100);
 	}
 
 	public void tick(Game g) {

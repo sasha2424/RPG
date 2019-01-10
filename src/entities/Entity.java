@@ -7,7 +7,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import textures.TextureLoader;
 
-public abstract class Entity implements Comparable<Entity> {
+public class Entity implements Comparable<Entity> {
 
 	protected double x;
 	protected double y;
@@ -19,7 +19,7 @@ public abstract class Entity implements Comparable<Entity> {
 	protected boolean alive = true;
 
 	protected ArrayList<CollisionBorder> collisionBox;
-	protected double collisionRange;
+	protected double collisionRange = 0;
 
 	protected String textureName;
 	protected String description = "this is a thing";
@@ -31,38 +31,25 @@ public abstract class Entity implements Comparable<Entity> {
 		this.x = x;
 		this.y = y;
 		collisionBox = new ArrayList<CollisionBorder>();
-
-		setStats();
-
-		// collisionRange is set to farthest possible point from entity center
-		collisionRange = 0;
-		for (CollisionBorder b : collisionBox) {
-			if (b.dist() + b.r > collisionRange) {
-				collisionRange = b.dist() + b.r;
-			}
-		}
-
 	}
-
-	public abstract void setStats();
 
 	public void reactToHover(Game g) {
 
 	}
 
-	public abstract void reactToClick(Game g);
+	public void reactToClick(Game g) {
+
+	}
+
+	public void tick(Game g) {
+
+	}
 
 	public void draw(PApplet p) {
 		if (visible) {
 			p.image(getTexture("Tree"), (float) x, (float) y);
 			this.drawCollisionBox(p);
 		}
-	}
-
-	public abstract void tick(Game g);
-
-	public String getDescription() {
-		return description;
 	}
 
 	public boolean touchesMouse(double mouseX, double mouseY) {
@@ -107,6 +94,16 @@ public abstract class Entity implements Comparable<Entity> {
 		return dist(e) < collisionRange + e.collisionRange;
 	}
 
+	protected void recalculateCollisionRange() {
+		// collisionRange is set to farthest possible point from entity center
+		collisionRange = 0;
+		for (CollisionBorder b : collisionBox) {
+			if (b.dist() + b.r > collisionRange) {
+				collisionRange = b.dist() + b.r;
+			}
+		}
+	}
+
 	/**
 	 * Collides with given Entity shifting both entities appropriately
 	 * 
@@ -143,6 +140,14 @@ public abstract class Entity implements Comparable<Entity> {
 		}
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	protected PImage getTexture(String name) {
+		return TextureLoader.getTexture(name);
+	}
+
 	public double getX() {
 		return (double) x;
 	}
@@ -157,10 +162,6 @@ public abstract class Entity implements Comparable<Entity> {
 
 	public void setY(double y) {
 		this.y = y;
-	}
-
-	protected PImage getTexture(String name) {
-		return TextureLoader.getTexture(name);
 	}
 
 	public void shiftX(double vect) {
@@ -188,6 +189,10 @@ public abstract class Entity implements Comparable<Entity> {
 			this.x = x;
 			this.y = y;
 			this.r = r;
+		}
+
+		public CollisionBorder getCopy(Entity e) {
+			return new CollisionBorder(e, x, y, r);
 		}
 
 		/**
@@ -271,6 +276,35 @@ public abstract class Entity implements Comparable<Entity> {
 			return renderPriority - e.renderPriority;
 		}
 		return (int) (y + renderYShift - e.y - e.renderYShift);
+	}
+
+	/**
+	 * This creates another entity with all the same parameters. The entity is
+	 * placed at the given X and Y coordinates.
+	 * 
+	 * @return
+	 */
+	public Entity createCopy(double x, double y) {
+		Entity e = new Entity(x, y);
+		e.speed = this.speed;
+		e.movable = this.movable;
+		e.visible = this.visible;
+		e.alive = this.alive;
+
+		ArrayList<CollisionBorder> collisionBox = new ArrayList<CollisionBorder>();
+		for (CollisionBorder b : this.collisionBox) {
+			collisionBox.add(b.getCopy(e));
+		}
+		e.collisionBox = collisionBox;
+		e.collisionRange = this.collisionRange;
+
+		e.textureName = this.textureName;
+		e.description = this.description;
+
+		e.renderPriority = this.renderPriority;
+		e.renderYShift = this.renderYShift;
+
+		return e;
 	}
 
 }

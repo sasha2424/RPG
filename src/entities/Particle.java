@@ -22,12 +22,6 @@ public class Particle extends Entity {
 	}
 
 	@Override
-	public void setStats() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void reactToClick(Game g) {
 		// TODO Auto-generated method stub
 

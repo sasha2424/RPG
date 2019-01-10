@@ -20,7 +20,7 @@ public class Game {
 		entities.add(new Building(0, 0));
 
 		double size = 50000;
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			double x = Math.random() * size - size / 2;
 			double y = Math.random() * size - size / 2;
 			if (Math.random() < 1) {
@@ -125,6 +125,7 @@ public class Game {
 	private void drawVisionRangeBorder(PApplet p, double scale, double centerX, double centerY) {
 		Color fogColor = new Color(0, 0, 0);
 		double gradientSize = 500;
+		double extraBorderSize = 500;
 
 		p.loadPixels();
 		for (int i = 0; i < p.pixels.length; i++) {
@@ -134,12 +135,12 @@ public class Game {
 			y = ((y - (double) p.height / 2) / scale + centerY);
 
 			double diff = player.getRenderDistance() - dist(x, y, player.getX(), player.getY());
-			if (diff < 0) {
+			if (diff < extraBorderSize) {
 				p.pixels[i] = p.color(fogColor.getRGB());
 				continue;
 			}
-			if (diff < gradientSize) {
-				double ratio = (diff / gradientSize);
+			if (diff < gradientSize + extraBorderSize) {
+				double ratio = ((diff - extraBorderSize) / (gradientSize));
 				Color pixel = new Color(p.pixels[i]);
 				int R = (int) (fogColor.getRed() + (pixel.getRed() - fogColor.getRed()) * ratio);
 				int G = (int) (fogColor.getGreen() + (pixel.getGreen() - fogColor.getGreen()) * ratio);

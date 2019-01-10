@@ -1,15 +1,13 @@
 package main;
 
-import java.util.ArrayList;
-
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
 public class Main extends PApplet {
 
 	float scale = 1;
-	float MIN_SCALE = 0.28242952f;
-	float MAX_SCALE = 2.9691548f;
+	float MIN_SCALE = 0.4f;
+	float MAX_SCALE = 3f;
 	Game g;
 	Keys keys;
 
@@ -43,8 +41,6 @@ public class Main extends PApplet {
 		translate(centerX, centerY);
 		scale(1 / scale);
 		translate(-width / 2, -height / 2);
-
-		System.out.println(scale);
 
 		if (frameRate >= 60) {
 			fill(0, 255, 0);

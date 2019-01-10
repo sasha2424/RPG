@@ -2,7 +2,6 @@ package entities;
 
 import java.util.ArrayList;
 
-import entities.Entity.CollisionBorder;
 import main.Game;
 import processing.core.PApplet;
 
@@ -12,10 +11,6 @@ public class Building extends Entity {
 
 	public Building(double x, double y) {
 		super(x, y);
-	}
-
-	public void setStats() {
-
 		movable = false;
 
 		float Size = 300;
@@ -38,6 +33,7 @@ public class Building extends Entity {
 			}
 		}
 
+		recalculateCollisionRange();
 	}
 
 	public void reactToHover(Game g) {
