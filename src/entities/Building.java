@@ -11,7 +11,7 @@ public class Building extends Entity {
 
 	public Building(double x, double y) {
 		super(x, y);
-		movable = false;
+		movable = true;
 
 		float Size = 300;
 		boundry = new ArrayList<Segment>();

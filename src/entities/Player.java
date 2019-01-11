@@ -9,10 +9,11 @@ public class Player extends Entity {
 
 	public Player(float x, float y) {
 		super(x, y);
-		renderPriority = 0;
 		movable = true;
-		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		speed = 10;
+		hasInventory = true;
+
+		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		recalculateCollisionRange();
 	}
 

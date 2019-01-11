@@ -17,17 +17,22 @@ public class Entity implements Comparable<Entity> {
 	protected boolean movable = true;
 	protected boolean visible = true;
 	protected boolean alive = true;
+	protected boolean isItem = false;
+	protected boolean hasInventory = false;
 
 	protected ArrayList<CollisionBorder> collisionBox;
 	protected double collisionRange = 0;
+
+	protected ArrayList<Entity> inventory;
 
 	protected String textureName;
 	protected String description = "this is a thing";
 
 	protected int renderPriority = 0;
 	protected double renderYShift = 0;
+	protected double scale = 1;
 
-	protected Entity(double x, double y) {
+	public Entity(double x, double y) {
 		this.x = x;
 		this.y = y;
 		collisionBox = new ArrayList<CollisionBorder>();
@@ -41,13 +46,28 @@ public class Entity implements Comparable<Entity> {
 
 	}
 
+	public void reactToInteract(Game g, Entity e) {
+		if (isItem && e.hasInventory) {
+			e.giveItem(this);
+			this.alive = false;
+		}
+	}
+
 	public void tick(Game g) {
 
 	}
 
+	public void giveItem(Entity e) {
+		inventory.add(e);
+	}
+
 	public void draw(PApplet p) {
 		if (visible) {
-			p.image(getTexture("Tree"), (float) x, (float) y);
+			p.pushMatrix();
+			p.translate((float) x, (float) y);
+			p.scale((float) scale);
+			p.image(getTexture(textureName), 0, 0);
+			p.popMatrix();
 			this.drawCollisionBox(p);
 		}
 	}
@@ -65,7 +85,7 @@ public class Entity implements Comparable<Entity> {
 	protected void drawCollisionBox(PApplet p) {
 		p.noFill();
 		for (CollisionBorder b : collisionBox) {
-			p.ellipse((float) (x + b.getX()), (float) (y + b.getY()), (float) (b.r * 2), (float) (b.r * 2));
+			p.ellipse((float) (x + b.getX()), (float) (y + b.getY()), (float) (b.getR() * 2), (float) (b.getR() * 2));
 		}
 	}
 
@@ -82,8 +102,9 @@ public class Entity implements Comparable<Entity> {
 			return false;
 		}
 		for (CollisionBorder b : collisionBox) {
-			dist = (double) Math.sqrt((b.x + x - mx) * (b.x + x - mx) + (b.y + y - my) * (b.y + y - my));
-			if (dist < b.r) {
+			dist = (double) Math
+					.sqrt((b.getX() + x - mx) * (b.getX() + x - mx) + (b.getY() + y - my) * (b.getY() + y - my));
+			if (dist < b.getR()) {
 				return true;
 			}
 		}
@@ -98,8 +119,8 @@ public class Entity implements Comparable<Entity> {
 		// collisionRange is set to farthest possible point from entity center
 		collisionRange = 0;
 		for (CollisionBorder b : collisionBox) {
-			if (b.dist() + b.r > collisionRange) {
-				collisionRange = b.dist() + b.r;
+			if (b.dist() + b.getR() > collisionRange) {
+				collisionRange = b.dist() + b.getR();
 			}
 		}
 	}
@@ -172,20 +193,26 @@ public class Entity implements Comparable<Entity> {
 		y += dy;
 	}
 
+	public boolean isAlive() {
+		return alive;
+	}
+
 	public double dist(Entity e) {
 		return (double) Math.sqrt((x - e.getX()) * (x - e.getX()) + (y - e.getY()) * (y - e.getY()));
 	}
 
 	protected class CollisionBorder {
-		protected double x, y; // relative to the x and y of the entity
+
+		private double x, y; // relative to the x and y of the entity
 		// these are the top left corner
-		protected double r; // radius of ball
+		private double r; // radius of ball
 
 		protected Entity e; // Entity that this CollisionBorder belongs to
 
 		public CollisionBorder(Entity e, double x, double y, double r) {
 			super();
 			this.e = e;
+
 			this.x = x;
 			this.y = y;
 			this.r = r;
@@ -203,13 +230,13 @@ public class Entity implements Comparable<Entity> {
 		 * @return
 		 */
 		public boolean inBorder(double mouseX, double mouseY) {
-			double dist = Math.sqrt((e.x + this.x - mouseX) * (e.x + this.x - mouseX)
-					+ (e.y + this.y - mouseY) * (e.y + this.y - mouseY));
-			return dist < this.r;
+			double dist = Math.sqrt((e.x + getX() - mouseX) * (e.x + getX() - mouseX)
+					+ (e.y + getY() - mouseY) * (e.y + getY() - mouseY));
+			return dist < getR();
 		}
 
 		public boolean collidesWith(CollisionBorder b) {
-			return dist(b) < b.getR() + r;
+			return dist(b) < b.getR() + getR();
 		}
 
 		/**
@@ -221,16 +248,16 @@ public class Entity implements Comparable<Entity> {
 		 */
 		public double[] collideWith(CollisionBorder b) {
 			double dist = dist(b);
-			if (dist == 0 || dist > b.getR() + r) {
+			if (dist == 0 || dist > b.getR() + getR()) {
 				return new double[] { 0f, 0f };
 			}
-			double overlap = (b.getR() + r - dist) / dist;
+			double overlap = (b.getR() + getR() - dist) / dist;
 			return new double[] { overlap * getDeltaX(b), overlap * getDeltaY(b) };
 
 		}
 
 		public double getX() {
-			return x;
+			return x * e.scale;
 		}
 
 		public void setX(double x) {
@@ -238,7 +265,7 @@ public class Entity implements Comparable<Entity> {
 		}
 
 		public double getY() {
-			return y;
+			return y * e.scale;
 		}
 
 		public void setY(double y) {
@@ -246,7 +273,7 @@ public class Entity implements Comparable<Entity> {
 		}
 
 		public double getR() {
-			return r;
+			return r * e.scale;
 		}
 
 		public void setR(double r) {
@@ -258,15 +285,15 @@ public class Entity implements Comparable<Entity> {
 		}
 
 		public double dist() {
-			return (double) Math.sqrt(x * x + y * y);
+			return (double) Math.sqrt(getX() * getX() + getY() * getY());
 		}
 
 		private double getDeltaX(CollisionBorder b) {
-			return (x + e.x - b.getX() - b.e.getX());
+			return (getX() + e.x - b.getX() - b.e.getX());
 		}
 
 		private double getDeltaY(CollisionBorder b) {
-			return (y + e.y - b.getY() - b.e.getY());
+			return (getY() + e.y - b.getY() - b.e.getY());
 		}
 
 	}

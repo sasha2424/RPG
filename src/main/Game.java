@@ -1,9 +1,9 @@
 package main;
 
 import java.awt.Color;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 import entities.*;
 import processing.core.PApplet;
@@ -23,10 +23,10 @@ public class Game {
 		for (int i = 0; i < 10000; i++) {
 			double x = Math.random() * size - size / 2;
 			double y = Math.random() * size - size / 2;
-			if (Math.random() < 1) {
+			if (Math.random() < .5) {
 				entities.add(new Tree(x, y));
 			} else {
-				entities.add(new Building(x, y));
+				entities.add(new Rock(x, y));
 			}
 		}
 
@@ -50,7 +50,14 @@ public class Game {
 	public void tick() {
 		ArrayList<Entity> toUpdate = new ArrayList<Entity>();
 
-		for (Entity e : entities) {
+		for (int i = 0; i < entities.size(); i++) {
+			if (!entities.get(i).isAlive()) {
+				entities.remove(i);
+				i--;
+				continue;
+			}
+			Entity e = entities.get(i);
+
 			if (Math.abs((e.getX() - player.getX())) > player.getRenderDistance()) {
 				continue;
 			}

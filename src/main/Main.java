@@ -7,7 +7,7 @@ public class Main extends PApplet {
 
 	float scale = 1;
 	float MIN_SCALE = 0.4f;
-	float MAX_SCALE = 3f;
+	float MAX_SCALE = 2.5f;
 	Game g;
 	Keys keys;
 
@@ -32,17 +32,16 @@ public class Main extends PApplet {
 		doPlayerMove();
 		g.tick();
 
+		pushMatrix();
 		translate(width / 2, height / 2);
 		scale(scale);
 		translate(-centerX, -centerY);
 
 		g.draw(this, getTranslatedMouseX(), getTranslatedMouseY(), scale, centerX, centerY);
 
-		translate(centerX, centerY);
-		scale(1 / scale);
-		translate(-width / 2, -height / 2);
+		popMatrix();
 
-		if (frameRate >= 60) {
+		if (frameRate >= 40) {
 			fill(0, 255, 0);
 		} else {
 			fill(255, 0, 0);
