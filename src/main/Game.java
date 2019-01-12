@@ -35,18 +35,6 @@ public class Game {
 
 	}
 
-	public void mouseAct(boolean pressed, double mouseX, double mouseY) {
-		if (pressed) {
-			for (Entity e : entities) {
-				e.tick(this);
-			}
-		} else {
-			for (Entity e : entities) {
-				e.tick(this);
-			}
-		}
-	}
-
 	public void tick() {
 		ArrayList<Entity> toUpdate = new ArrayList<Entity>();
 
@@ -169,6 +157,29 @@ public class Game {
 		p.rect((float) x - hSpace, (float) y + vSpace, p.textWidth(s) + hSpace * 2, -tSize - vSpace);
 		p.fill(0);
 		p.text(s, (float) x, (float) y);
+	}
+
+	public void playerAct() {
+		for (Entity e : entities) {
+			if (e == player) {
+				continue;
+			}
+			if (Math.abs(e.getX() - player.getX()) > player.getInteractRange()) {
+				continue;
+			}
+			if (Math.abs(e.getY() - player.getY()) > player.getInteractRange()) {
+				continue;
+			}
+			if (e.dist(player) > player.getInteractRange()) {
+				continue;
+			}
+			System.out.println(e.dist(player));
+			e.reactToInteract(this, player);
+		}
+	}
+
+	public void removeEntities() {
+		entities.removeIf(e -> !e.isAlive());
 	}
 
 	public void add(Entity e) {

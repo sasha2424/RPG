@@ -12,6 +12,8 @@ public class Player extends Entity {
 		movable = true;
 		speed = 10;
 		hasInventory = true;
+		interactRange = 200;
+		description = "this is the player";
 
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		recalculateCollisionRange();

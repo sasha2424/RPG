@@ -14,6 +14,8 @@ public class Entity implements Comparable<Entity> {
 
 	protected double speed;
 
+	protected double interactRange = 0;
+
 	protected boolean movable = true;
 	protected boolean visible = true;
 	protected boolean alive = true;
@@ -36,6 +38,7 @@ public class Entity implements Comparable<Entity> {
 		this.x = x;
 		this.y = y;
 		collisionBox = new ArrayList<CollisionBorder>();
+		inventory = new ArrayList<Entity>();
 	}
 
 	public void reactToHover(Game g) {
@@ -47,6 +50,7 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public void reactToInteract(Game g, Entity e) {
+		System.out.println(e.description);
 		if (isItem && e.hasInventory) {
 			e.giveItem(this);
 			this.alive = false;
@@ -195,6 +199,10 @@ public class Entity implements Comparable<Entity> {
 
 	public boolean isAlive() {
 		return alive;
+	}
+
+	public double getInteractRange() {
+		return interactRange;
 	}
 
 	public double dist(Entity e) {

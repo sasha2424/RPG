@@ -1,7 +1,7 @@
 package main;
 
 public class Keys {
-	public boolean up, down, left, right, inventory, trackPlayer;
+	public boolean up, down, left, right, inventory, interact, trackPlayer;
 
 	public Keys() {
 		up = false;
@@ -9,6 +9,7 @@ public class Keys {
 		left = false;
 		right = false;
 		inventory = false;
+		interact = false;
 		trackPlayer = false;
 	}
 
@@ -24,6 +25,8 @@ public class Keys {
 			return right;
 		case "inventory":
 			return inventory;
+		case "interact":
+			return interact;
 		case "trackPlayer":
 			return trackPlayer;
 		}
@@ -55,6 +58,9 @@ public class Keys {
 			break;
 		case 83:
 			down = state;
+			break;
+		case 32:
+			interact = state;
 			break;
 		case 89: // this is how a toggle key is setup
 			if (!state)
