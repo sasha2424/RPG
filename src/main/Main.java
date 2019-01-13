@@ -31,6 +31,7 @@ public class Main extends PApplet {
 		doPlayerTracking();
 		doPlayerMove();
 		doPlayerInteract();
+		doPlayerInventory();
 		g.tick();
 
 		pushMatrix();
@@ -56,6 +57,10 @@ public class Main extends PApplet {
 
 	private double getTranslatedMouseY() {
 		return (double) ((mouseY - height / 2) / scale + centerY);
+	}
+
+	private void doPlayerInventory() {
+		g.openPlayerInventory(keys.getKey("inventory"));
 	}
 
 	private void doPlayerInteract() {
@@ -113,7 +118,7 @@ public class Main extends PApplet {
 	}
 
 	public void keyPressed() {
-		//System.out.println(keyCode);
+		// System.out.println(keyCode);
 		keys.setKey(keyCode, true);
 	}
 

@@ -14,6 +14,8 @@ public class Game {
 
 	Player player;
 
+	private Entity activeContainer; // what to display for inventory
+
 	public Game() {
 		entities = new ArrayList<Entity>();
 
@@ -36,6 +38,11 @@ public class Game {
 	}
 
 	public void tick() {
+		if (activeContainer != null) {
+			activeContainer.tickInventory(this);
+			return;
+		}
+
 		ArrayList<Entity> toUpdate = new ArrayList<Entity>();
 
 		for (int i = 0; i < entities.size(); i++) {
@@ -80,6 +87,12 @@ public class Game {
 	 * @param mouseY
 	 */
 	public void draw(PApplet p, double mouseX, double mouseY, double scale, double centerX, double centerY) {
+
+		if (activeContainer != null) {
+			activeContainer.drawInventory(p);
+			return;
+		}
+
 		ArrayList<Entity> toRender = new ArrayList<Entity>();
 
 		for (Entity e : entities) {
@@ -173,7 +186,6 @@ public class Game {
 			if (e.dist(player) > player.getInteractRange()) {
 				continue;
 			}
-			System.out.println(e.dist(player));
 			e.reactToInteract(this, player);
 		}
 	}
@@ -186,8 +198,12 @@ public class Game {
 		entities.add(e);
 	}
 
-	public void ReactEntityToMouse() {
-
+	public void openPlayerInventory(boolean state) {
+		if (state) {
+			activeContainer = player;
+		} else {
+			activeContainer = null;
+		}
 	}
 
 	public void movePlayerUp() {

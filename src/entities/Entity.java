@@ -9,8 +9,13 @@ import textures.TextureLoader;
 
 public class Entity implements Comparable<Entity> {
 
+	public static final double ACCEL_IN_INVENTORY = .1;
+
 	protected double x;
 	protected double y;
+
+	protected double vx;
+	protected double vy;
 
 	protected double speed;
 
@@ -25,7 +30,7 @@ public class Entity implements Comparable<Entity> {
 	protected ArrayList<CollisionBorder> collisionBox;
 	protected double collisionRange = 0;
 
-	protected ArrayList<Entity> inventory;
+	protected Inventory inventory;
 
 	protected String textureName;
 	protected String description = "this is a thing";
@@ -38,7 +43,7 @@ public class Entity implements Comparable<Entity> {
 		this.x = x;
 		this.y = y;
 		collisionBox = new ArrayList<CollisionBorder>();
-		inventory = new ArrayList<Entity>();
+		inventory = new Inventory(this);
 	}
 
 	public void reactToHover(Game g) {
@@ -46,11 +51,10 @@ public class Entity implements Comparable<Entity> {
 	}
 
 	public void reactToClick(Game g) {
-
+		
 	}
 
 	public void reactToInteract(Game g, Entity e) {
-		System.out.println(e.description);
 		if (isItem && e.hasInventory) {
 			e.giveItem(this);
 			this.alive = false;
@@ -61,8 +65,12 @@ public class Entity implements Comparable<Entity> {
 
 	}
 
+	public void tickInventory(Game g) {
+		inventory.tick(g);
+	}
+
 	public void giveItem(Entity e) {
-		inventory.add(e);
+		inventory.addItem(e);
 	}
 
 	public void draw(PApplet p) {
@@ -91,6 +99,10 @@ public class Entity implements Comparable<Entity> {
 		for (CollisionBorder b : collisionBox) {
 			p.ellipse((float) (x + b.getX()), (float) (y + b.getY()), (float) (b.getR() * 2), (float) (b.getR() * 2));
 		}
+	}
+
+	public void drawInventory(PApplet p) {
+		inventory.draw(p);
 	}
 
 	/**
@@ -163,6 +175,17 @@ public class Entity implements Comparable<Entity> {
 				}
 			}
 		}
+	}
+
+	public boolean collidesWith(Entity e) {
+		for (CollisionBorder self : collisionBox) {
+			for (CollisionBorder other : e.collisionBox) {
+				if (self.collidesWith(other)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public String getDescription() {
@@ -302,6 +325,87 @@ public class Entity implements Comparable<Entity> {
 
 		private double getDeltaY(CollisionBorder b) {
 			return (getY() + e.y - b.getY() - b.e.getY());
+		}
+
+	}
+
+	public class Inventory {
+		private Entity e;
+		private ArrayList<Entity> inventory;
+		private double width;
+		private double height;
+
+		public Inventory(Entity e) {
+			this.e = e;
+			inventory = new ArrayList<Entity>();
+		}
+
+		public void draw(PApplet p) {
+			p.fill(193, 123, 42);
+			p.rect(0, 0, (float) width, (float) height);
+			for (Entity e : inventory) {
+				e.draw(p);
+			}
+		}
+
+		public void tick(Game g) {
+			for (Entity e : inventory) {
+
+				// these move entity back into box
+				if (e.getX() - e.collisionRange < 0) {
+					e.setX(e.collisionRange);
+				}
+				if (e.getX() + e.collisionRange > width) {
+					e.setX(width - e.collisionRange);
+				}
+				if (e.getY() - e.collisionRange < 0) {
+					e.setY(e.collisionRange);
+				}
+				if (e.getY() + e.collisionRange > height) {
+					e.setY(height - e.collisionRange);
+					e.vy = 0;
+				}
+
+				// gravity and motion
+				if (e.getY() + e.collisionRange + e.vy + ACCEL_IN_INVENTORY < height) {
+					e.vy += ACCEL_IN_INVENTORY;
+					e.setY(e.getY() + e.vy);
+				}
+			}
+
+			for (int i = 0; i < inventory.size() - 1; i++) {
+				for (int j = i + 1; j < inventory.size(); j++) {
+					if (inventory.get(i).nearEntity(inventory.get(j))) {
+						if (inventory.get(i).collidesWith(inventory.get(j))) {
+							inventory.get(i).vy = 0;
+						}
+						inventory.get(i).collide(inventory.get(j));
+					}
+				}
+			}
+
+		}
+
+		public void addItem(Entity e) {
+			e.setX(Math.random()*width);
+			e.setY(0);
+			inventory.add(e);
+		}
+
+		public double getWidth() {
+			return width;
+		}
+
+		public void setWidth(double width) {
+			this.width = width;
+		}
+
+		public double getHeight() {
+			return height;
+		}
+
+		public void setHeight(double height) {
+			this.height = height;
 		}
 
 	}

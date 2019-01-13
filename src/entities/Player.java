@@ -15,6 +15,9 @@ public class Player extends Entity {
 		interactRange = 200;
 		description = "this is the player";
 
+		inventory.setHeight(300);
+		inventory.setWidth(300);
+
 		collisionBox.add(new CollisionBorder(this, 0, 0, 50));
 		recalculateCollisionRange();
 	}
